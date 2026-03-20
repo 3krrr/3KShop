@@ -495,11 +495,11 @@
         <span class="layout-caret" id="layoutCaret">▾</span>
       </button>
       <div class="layout-menu" id="layoutMenu">
-        <div class="layout-option active" data-layout="xl" onclick="selectLayout('xl',event)">
+        <div class="layout-option" data-layout="xl" onclick="selectLayout('xl',event)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
           <div class="layout-option-label">초대형 타일<div class="layout-option-sub">2–3열 · 큰 썸네일</div></div>
         </div>
-        <div class="layout-option" data-layout="lg" onclick="selectLayout('lg',event)">
+        <div class="layout-option active" data-layout="lg" onclick="selectLayout('lg',event)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="6" y="1" width="4" height="4" rx="1"/><rect x="11" y="1" width="4" height="4" rx="1"/><rect x="1" y="6" width="4" height="4" rx="1"/><rect x="6" y="6" width="4" height="4" rx="1"/><rect x="11" y="6" width="4" height="4" rx="1"/></svg>
           <div class="layout-option-label">대형 타일<div class="layout-option-sub">3–4열</div></div>
         </div>
@@ -566,7 +566,7 @@
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
 
-    const savedLayout = localStorage.getItem('3kshop_layout') || 'xl';
+    const savedLayout = localStorage.getItem('3kshop_layout') || 'lg';
     currentLayout = savedLayout;
     applyLayoutUI(savedLayout);
 
