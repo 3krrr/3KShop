@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3K SHOP — 프리미엄 자료실</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ───────── TOKENS ───────── */
+    :root {
+      --accent: #4f7fff;
+      --accent2: #a259ff;
+      --accent-glow: rgba(79,127,255,.25);
+      --radius: 14px;
+      --ease: cubic-bezier(.4,0,.2,1);
+
+      /* light */
+      --bg: #f0f2f7;
+      --surface: #ffffff;
+      --surface2: #f7f8fc;
+      --border: rgba(0,0,0,.07);
+      --text: #1a1d27;
+      --text2: #6b7280;
+      --text3: #9ca3af;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.06), 0 2px 10px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.09);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.13);
+      --shadow-glow: 0 0 0 3px var(--accent-glow);
+    }
+    [data-theme="dark"] {
+      --bg: #0d0f1a;
+      --surface: #151824;
+      --surface2: #1c1f30;
+      --border: rgba(255,255,255,.07);
+      --text: #e8ecf8;
+      --text2: #8b92aa;
+      --text3: #555d7a;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.25);
+      --shadow-md: 0 4px 20px rgba(0,0,0,.4);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.5);
+      --accent-glow: rgba(79,127,255,.35);
+    }
+
+    /* ───────── RESET ───────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background .35s var(--ease), color .35s var(--ease);
+    }
+
+    /* ───────── NOISE TEXTURE OVERLAY ───────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: .6;
+    }
+
+    /* ───────── HEADER ───────── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(var(--surface-rgb, 255,255,255), .7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      transition: background .35s;
+    }
+    [data-theme="dark"] header { background: rgba(21,24,36,.75); }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.35rem;
+      color: var(--text);
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: opacity .2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .logo:hover { opacity: .75; }
+    .logo-accent { color: var(--accent); }
+    .logo-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; margin-left: 2px; }
+
+    .header-center {
+      flex: 1;
+      display: flex; align-items: center; gap: 6px;
+      overflow: hidden;
+    }
+    .breadcrumb-item {
+      font-size: .82rem; font-weight: 600;
+      color: var(--text2); cursor: pointer;
+      padding: 4px 10px; border-radius: 8px;
+      transition: .2s;
+      white-space: nowrap;
+    }
+    .breadcrumb-item:hover { background: var(--surface2); color: var(--accent); }
+    .breadcrumb-sep { color: var(--text3); font-size: .8rem; }
+
+    .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    /* 레이아웃 드롭다운 */
+    .layout-dropdown-wrap { position: relative; }
+    .layout-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 10px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text2); font-size: .8rem; font-weight: 600;
+      cursor: pointer; transition: .2s;
+      white-space: nowrap;
+    }
+    .layout-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .layout-btn svg { width: 14px; height: 14px; opacity: .7; flex-shrink: 0; }
+    .layout-caret { font-size: .65rem; transition: transform .2s; }
+    .layout-caret.open { transform: rotate(180deg); }
+
+    .layout-menu {
+      position: absolute; right: 0; top: calc(100% + 8px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 300;
+      display: none;
+    }
+    .layout-menu.open { display: block; animation: fadeUp .2s var(--ease); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .layout-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px;
+      cursor: pointer; transition: .15s;
+      font-size: .82rem; font-weight: 600; color: var(--text2);
+    }
+    .layout-option:hover { background: var(--surface2); color: var(--text); }
+    .layout-option.active { background: var(--accent); color: white; }
+    .layout-option svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .layout-option-label { flex: 1; }
+    .layout-option-sub { font-size: .72rem; opacity: .65; font-weight: 400; }
+
+    /* 다크모드 토글 */
+    .theme-toggle {
+      width: 44px; height: 26px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 13px;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: background .3s, border-color .3s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+    [data-theme="dark"] .theme-toggle { background: var(--accent); border-color: var(--accent); }
+    .theme-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--text2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem;
+      transition: transform .3s var(--ease), background .3s;
+    }
+    [data-theme="dark"] .theme-thumb { transform: translateX(18px); background: white; }
+
+    /* ───────── TRANSITIONS ───────── */
+
+    /* 컨테이너 전환 */
+    .shop-grid {
+      display: grid;
+      gap: 18px;
+      transition: grid-template-columns .35s var(--ease), opacity .25s var(--ease);
+    }
+
+    /* 페이지 전환 애니메이션 */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(14px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);   }
+    }
+    @keyframes cardInList {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* 카드 등장 — stagger는 JS로 --i 변수 주입 */
+    .card.entering {
+      animation: cardIn .38s var(--ease) both;
+      animation-delay: calc(var(--i, 0) * 40ms);
+    }
+    .layout-list .card.entering,
+    .layout-table .card.entering {
+      animation-name: cardInList;
+      animation-delay: calc(var(--i, 0) * 25ms);
+    }
+
+    /* 컨테이너 fade out/in */
+    .shop-grid.transitioning {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity .18s var(--ease), transform .18s var(--ease);
+    }
+    .shop-grid.transitioning-in {
+      animation: fadeIn .22s var(--ease) both;
+    }
+
+    /* 브레드크럼 전환 */
+    #breadcrumb { transition: opacity .2s; }
+    #breadcrumb.updating { opacity: 0; }
+
+    /* 다크모드 — 모든 색상 토큰 부드럽게 */
+    *, *::before, *::after {
+      transition-property: background-color, border-color, color, box-shadow;
+      transition-duration: .3s;
+      transition-timing-function: var(--ease);
+    }
+    /* 단, 애니메이션/transform 은 개별 override */
+    .card, .card-thumb, .fake-btn, .theme-toggle, .theme-thumb,
+    .layout-btn, .layout-option, .patch-date-item, .patch-detail,
+    .breadcrumb-item, .view-btn {
+      transition: background-color .3s var(--ease),
+                  border-color .3s var(--ease),
+                  color .3s var(--ease),
+                  box-shadow .25s var(--ease),
+                  transform .22s var(--ease),
+                  opacity .22s var(--ease);
+    }
+    /* ───────── MAIN GRID ───────── */
+    .shop-wrap { max-width: 1440px; margin: 0 auto; padding: 36px 24px 80px; position: relative; z-index: 1; }
+
+    .shop-grid.layout-lg    { grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); }
+    .shop-grid.layout-md    { grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); }
+    .shop-grid.layout-sm    { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
+    .shop-grid.layout-xs    { grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); }
+    .shop-grid.layout-list  { grid-template-columns: 1fr; gap: 10px; }
+    .shop-grid.layout-table { grid-template-columns: 1fr; gap: 6px; }
+
+    /* ───────── CARD ───────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: visible;
+      position: relative;
+      display: flex; flex-direction: column;
+      transition: box-shadow .25s var(--ease), transform .25s var(--ease), border-color .25s;
+      cursor: pointer;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md), 0 0 0 2px rgba(79,127,255,.15);
+      transform: translateY(-3px);
+    }
+
+    /* ── 타일 모드 썸네일 ── */
+    .layout-xl .card-thumb  { height: 130px; }
+    .layout-lg .card-thumb  { height: 110px; }
+    .layout-md .card-thumb  { height: 90px; }
+    .layout-sm .card-thumb  { height: 70px; }
+    .layout-xs .card-thumb  { height: 60px; }
+
+    .card-thumb {
+      background: var(--surface2);
+      border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      position: relative; overflow: hidden;
+      flex-shrink: 0;
+      transition: background .3s;
+    }
+    .layout-sm .card-thumb, .layout-xs .card-thumb { font-size: 1.8rem; }
+
+    /* shimmer 효과 */
+    .card-thumb::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.08) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform .5s;
+    }
+    .card:hover .card-thumb::after { transform: translateX(100%); }
+
+    /* ── 리스트 모드 ── */
+    .layout-list .card { flex-direction: row; align-items: center; padding: 16px 20px; gap: 16px; min-height: 74px; }
+    .layout-list .card-thumb { width: 52px; height: 52px !important; min-width: 52px; border-radius: 12px; font-size: 1.6rem; }
+    .layout-list .card-body  { padding: 0; flex-direction: row; align-items: center; gap: 12px; }
+    .layout-list .card-title { -webkit-line-clamp: 1; height: auto; font-size: .95rem; flex: 1; }
+    .layout-list .card-meta  { display: none; }
+    .layout-list .btn-group  { margin: 0; flex-direction: row; }
+
+    /* ── 테이블 모드 ── */
+    .layout-table .card { flex-direction: row; align-items: center; padding: 12px 16px; gap: 12px; min-height: 56px; border-radius: 10px; }
+    .layout-table .card-thumb { width: 38px; height: 38px !important; min-width: 38px; border-radius: 8px; font-size: 1.2rem; }
+    .layout-table .card-body  { padding: 0; flex-direction: row; align-items: center; gap: 10px; }
+    .layout-table .card-title { -webkit-line-clamp: 1; height: auto; font-size: .85rem; flex: 1; }
+    .layout-table .card-meta  { display: none; }
+    .layout-table .btn-group  { margin: 0; }
+    .layout-table .fake-btn   { padding: 6px 12px; font-size: .75rem; }
+
+    /* ── 배지 ── */
+    .badge {
+      position: absolute; top: 10px; left: 10px;
+      padding: 4px 9px; border-radius: 6px;
+      font-size: .68rem; font-weight: 700; color: white;
+      z-index: 5; letter-spacing: .04em;
+      pointer-events: none;
+    }
+    .badge-nas   { background: linear-gradient(135deg,#f97316,#ea580c); }
+    .badge-drive { background: linear-gradient(135deg,#10b981,#059669); }
+    .badge-folder{ background: linear-gradient(135deg,#6366f1,#4f46e5); }
+    .layout-list .badge, .layout-table .badge { position: static; font-size: .65rem; border-radius: 5px; padding: 3px 7px; flex-shrink: 0; }
+
+    /* ── 카드 바디 ── */
+    .card-body {
+      padding: 16px;
+      flex: 1; display: flex; flex-direction: column;
+      position: relative;
+    }
+    .layout-sm .card-body, .layout-xs .card-body { padding: 10px 12px; }
+
+    .card-title {
+      font-size: 1rem; font-weight: 700;
+      color: var(--text); line-height: 1.45;
+      overflow: hidden; text-overflow: ellipsis;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      height: 2.9em; margin-bottom: 6px;
+    }
+    .layout-sm .card-title, .layout-xs .card-title { font-size: .85rem; }
+
+    .card-meta {
+      font-size: .75rem; color: var(--text3);
+      margin-bottom: 14px;
+    }
+
+    /* ── 버튼 ── */
+    .btn-group {
+      display: flex; gap: 8px; margin-top: auto;
+      position: relative;
+    }
+    .fake-btn {
+      flex: 1; padding: 10px 0; text-align: center;
+      border-radius: 9px; font-weight: 600; font-size: .85rem;
+      border: none; cursor: pointer;
+      transition: transform .18s, box-shadow .18s, background .18s;
+      font-family: inherit;
+      position: relative;
+    }
+    .btn-down {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-down:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(79,127,255,.45); }
+
+    .btn-patch {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .btn-patch:hover:not(:disabled) { background: var(--accent2); color: white; border-color: transparent; transform: scale(1.03); }
+    .btn-patch:disabled { opacity: .35; cursor: not-allowed; }
+    .btn-patch.active { background: var(--accent2); color: white; border-color: transparent; }
+
+    /* ── 패치 드롭다운 — body에 직접 마운트, fixed ── */
+    .patch-dropdown {
+      position: fixed;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      padding: 10px;
+      z-index: 99999;
+      max-height: 320px;
+      width: 260px;
+      overflow-y: auto;
+      animation: fadeUp .25s var(--ease);
+    }
+
+    /* 스크롤바 */
+    .patch-dropdown::-webkit-scrollbar { width: 5px; }
+    .patch-dropdown::-webkit-scrollbar-track { background: transparent; }
+    .patch-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+    .patch-date-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px; border-radius: 9px;
+      font-size: .82rem; font-weight: 700;
+      color: var(--accent); cursor: pointer;
+      transition: .15s;
+    }
+    .patch-date-item:hover { background: var(--surface2); }
+    .patch-date-item .chevron { transition: transform .2s; font-size: .75rem; opacity: .6; }
+    .patch-date-item.active .chevron { transform: rotate(90deg); }
+
+    .patch-detail {
+      font-size: .78rem; color: var(--text2);
+      line-height: 1.75;
+      padding: 0 12px;
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s var(--ease), padding .3s;
+      border-left: 2px solid var(--accent);
+      margin-left: 12px;
+    }
+    .patch-detail.active { max-height: 400px; padding: 10px 12px; margin: 4px 0 8px 12px; }
+
+    /* ── 폴더 뒤로가기 카드 ── */
+    .card-back {
+      background: var(--surface2);
+      border: 2px dashed var(--border);
+      min-height: 80px;
+      justify-content: center; align-items: center;
+      gap: 10px;
+      font-weight: 700; color: var(--text3);
+    }
+    .card-back:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+    .layout-list .card-back, .layout-table .card-back { flex-direction: row; padding: 16px 20px; min-height: auto; }
+
+    /* ── 빈 폴더 ── */
+    .empty-msg {
+      grid-column: 1/-1;
+      text-align: center; padding: 80px 40px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      color: var(--text3);
+      font-size: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    /* ── 로딩 ── */
+    #loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 50vh; gap: 16px;
+      color: var(--text3); font-size: .9rem;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ───────── 반응형 ───────── */
+    @media (max-width: 640px) {
+      header { padding: 0 16px; }
+      .shop-wrap { padding: 20px 14px 60px; }
+      .shop-grid.layout-xl { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); }
+      .shop-grid.layout-lg { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── CONFIG ─────────────────────────────────────── -->
+<script>
+  const SHEET_API_KEY = 'AIzaSyADxuPBfoEYQVDj6mTPajjVlxRwWwkElEc';
+  const SHEET_ID      = '1TJSaZrNME-O-IJCOYi7DAyMt-_e7a7VDsDTnpsZKkK4';
+  const SHEET_NAME    = '링크';
+  const SHEET_RANGE   = encodeURIComponent(`${SHEET_NAME}!A2:F1000`);
+</script>
+
+<!-- ─── HEADER ──────────────────────────────────────── -->
+<header>
+  <div class="logo" onclick="goHome()">
+    3K <span class="logo-accent">SHOP</span><span class="logo-dot"></span>
+  </div>
+
+  <div class="header-center" id="breadcrumb">
+    <div class="breadcrumb-item" onclick="goHome()">📂 HOME</div>
+  </div>
+
+  <div class="header-right">
+
+    <!-- 레이아웃 드롭다운 -->
+    <div class="layout-dropdown-wrap" id="layoutWrap">
+      <button class="layout-btn" onclick="toggleLayoutMenu(event)" id="layoutBtnLabel">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        <span id="layoutLabel">큰 타일</span>
+        <span class="layout-caret" id="layoutCaret">▾</span>
+      </button>
+      <div class="layout-menu" id="layoutMenu">
+        <div class="layout-option active" data-layout="xl" onclick="selectLayout('xl',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+          <div class="layout-option-label">초대형 타일<div class="layout-option-sub">2–3열 · 큰 썸네일</div></div>
+        </div>
+        <div class="layout-option" data-layout="lg" onclick="selectLayout('lg',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="4" height="4" rx="1"/><rect x="6" y="1" width="4" height="4" rx="1"/><rect x="11" y="1" width="4" height="4" rx="1"/><rect x="1" y="6" width="4" height="4" rx="1"/><rect x="6" y="6" width="4" height="4" rx="1"/><rect x="11" y="6" width="4" height="4" rx="1"/></svg>
+          <div class="layout-option-label">대형 타일<div class="layout-option-sub">3–4열</div></div>
+        </div>
+        <div class="layout-option" data-layout="md" onclick="selectLayout('md',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="3" height="3" rx=".8"/><rect x="5" y="1" width="3" height="3" rx=".8"/><rect x="9" y="1" width="3" height="3" rx=".8"/><rect x="13" y="1" width="3" height="3" rx=".8"/><rect x="1" y="5" width="3" height="3" rx=".8"/><rect x="5" y="5" width="3" height="3" rx=".8"/><rect x="9" y="5" width="3" height="3" rx=".8"/><rect x="13" y="5" width="3" height="3" rx=".8"/></svg>
+          <div class="layout-option-label">중형 타일<div class="layout-option-sub">4–5열</div></div>
+        </div>
+        <div class="layout-option" data-layout="sm" onclick="selectLayout('sm',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="2.5" height="2.5" rx=".6"/><rect x="4.5" y="1" width="2.5" height="2.5" rx=".6"/><rect x="8" y="1" width="2.5" height="2.5" rx=".6"/><rect x="11.5" y="1" width="2.5" height="2.5" rx=".6"/></svg>
+          <div class="layout-option-label">소형 타일<div class="layout-option-sub">5–7열</div></div>
+        </div>
+        <div class="layout-option" data-layout="xs" onclick="selectLayout('xs',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="2" cy="2" r="1.2"/><circle cx="5.5" cy="2" r="1.2"/><circle cx="9" cy="2" r="1.2"/><circle cx="12.5" cy="2" r="1.2"/><circle cx="2" cy="5.5" r="1.2"/><circle cx="5.5" cy="5.5" r="1.2"/><circle cx="9" cy="5.5" r="1.2"/><circle cx="12.5" cy="5.5" r="1.2"/></svg>
+          <div class="layout-option-label">미니 타일<div class="layout-option-sub">7열+</div></div>
+        </div>
+        <div class="layout-option" data-layout="list" onclick="selectLayout('list',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="3" x2="15" y2="3"/><line x1="1" y1="7" x2="15" y2="7"/><line x1="1" y1="11" x2="15" y2="11"/></svg>
+          <div class="layout-option-label">리스트<div class="layout-option-sub">1열 · 컴팩트</div></div>
+        </div>
+        <div class="layout-option" data-layout="table" onclick="selectLayout('table',event)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="2" x2="15" y2="2"/><line x1="1" y1="5" x2="15" y2="5"/><line x1="1" y1="8" x2="15" y2="8"/><line x1="1" y1="11" x2="15" y2="11"/><line x1="1" y1="14" x2="15" y2="14"/></svg>
+          <div class="layout-option-label">테이블<div class="layout-option-sub">1열 · 초밀집</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 다크모드 토글 -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="테마 전환" aria-label="다크모드 토글">
+      <div class="theme-thumb" id="themeThumb">
+        <span id="themeIcon">☀️</span>
+      </div>
+    </button>
+
+  </div>
+</header>
+
+<!-- ─── MAIN ─────────────────────────────────────────── -->
+<div class="shop-wrap" id="shopWrap">
+  <div id="loading">
+    <div class="spinner"></div>
+    <span>자료를 불러오는 중...</span>
+  </div>
+  <div class="shop-grid layout-xl" id="list-container" style="display:none;"></div>
+</div>
+
+<!-- ─── SCRIPT ──────────────────────────────────────── -->
+<script>
+  let allData     = [];
+  let currentPath = [];
+  let linkStorage  = [];
+  let patchStorage = [];
+  let currentLayout = 'xl';
+  let activePatchIndex = null;
+
+  const LAYOUT_LABELS = {
+    xl:'초대형 타일', lg:'대형 타일', md:'중형 타일',
+    sm:'소형 타일', xs:'미니 타일', list:'리스트', table:'테이블'
+  };
+
+  /* ─── 초기화 ─── */
+  window.onload = function() {
+    // 저장된 테마/레이아웃 복원
+    const savedTheme = localStorage.getItem('3kshop_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    const savedLayout = localStorage.getItem('3kshop_layout') || 'xl';
+    currentLayout = savedLayout;
+    applyLayoutUI(savedLayout);
+
+    fetchSheetData();
+  };
+
+  /* ─── Google Sheets API 호출 ─── */
+  async function fetchSheetData() {
+    try {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_RANGE}?key=${SHEET_API_KEY}`;
+      const res  = await fetch(url);
+      const json = await res.json();
+
+      if (json.error) throw new Error(json.error.message);
+
+      const rows = json.values || [];
+      allData = rows
+        .filter(r => r[0] && r[0].toString().trim() !== '' &&
+                     r[1] && r[1].toString().trim() !== '')
+        .map(r => [
+          r[0]||'', r[1]||'', r[2]||'', r[3]||'', r[4]||'', r[5]||''
+        ]);
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('list-container').style.display = 'grid';
+      render();
+    } catch (e) {
+      document.getElementById('loading').innerHTML =
+        `<span style="color:#f97316">⚠ 데이터 로드 실패: ${e.message}</span>`;
+    }
+  }
+
+  /* ─── 테마 ─── */
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('3kshop_theme', next);
+    updateThemeIcon(next);
+  }
+  function updateThemeIcon(theme) {
+    document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+  }
+
+  /* ─── 레이아웃 ─── */
+  function toggleLayoutMenu(e) {
+    e.stopPropagation();
+    const menu  = document.getElementById('layoutMenu');
+    const caret = document.getElementById('layoutCaret');
+    const isOpen = menu.classList.contains('open');
+    menu.classList.toggle('open', !isOpen);
+    caret.classList.toggle('open', !isOpen);
+  }
+
+  function selectLayout(layout, e) {
+    e.stopPropagation();
+    currentLayout = layout;
+    const container = document.getElementById('list-container');
+    container.classList.add('transitioning');
+    setTimeout(() => {
+      applyLayoutUI(layout);
+      // re-add entering class to all cards for stagger
+      container.querySelectorAll('.card').forEach((card, i) => {
+        card.classList.remove('entering');
+        void card.offsetWidth; // reflow
+        card.classList.add('entering');
+        card.style.setProperty('--i', i);
+      });
+      container.classList.remove('transitioning');
+      container.classList.add('transitioning-in');
+      setTimeout(() => container.classList.remove('transitioning-in'), 300);
+    }, 160);
+    localStorage.setItem('3kshop_layout', layout);
+    closeLayoutMenu();
+    closeAllPatches();
+  }
+
+  function applyLayoutUI(layout) {
+    // 그리드 클래스 교체
+    const grid = document.getElementById('list-container');
+    grid.className = `shop-grid layout-${layout}`;
+
+    // 드롭다운 active
+    document.querySelectorAll('.layout-option').forEach(el => {
+      el.classList.toggle('active', el.dataset.layout === layout);
+    });
+
+    // 라벨 업데이트
+    document.getElementById('layoutLabel').textContent = LAYOUT_LABELS[layout] || layout;
+  }
+
+  function closeLayoutMenu() {
+    document.getElementById('layoutMenu').classList.remove('open');
+    document.getElementById('layoutCaret').classList.remove('open');
+  }
+
+  /* ─── 다운로드 ─── */
+  function openDownload(index, e) {
+    e.stopPropagation();
+    if (linkStorage[index]) window.open(linkStorage[index], '_blank');
+  }
+
+  /* ─── 패치내역 ─── */
+  function togglePatch(index, e) {
+    e.stopPropagation();
+
+    if (activePatchIndex === index) { closeAllPatches(); return; }
+    closeAllPatches();
+
+    const patchText = patchStorage[index];
+    if (!patchText || !patchText.trim()) return;
+
+    const patches = parsePatchNotes(patchText);
+    if (!patches.length) return;
+
+    const btn  = e.currentTarget;
+    const rect = btn.getBoundingClientRect();  // 버튼의 뷰포트 기준 위치
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'patch-dropdown';
+    dropdown.id = `pd-${index}`;
+    dropdown.innerHTML = patches.map((p, i) => `
+      <div class="patch-date-item" onclick="togglePatchDetail(event,${index},${i})" data-idx="${i}">
+        ${p.date}<span class="chevron">›</span>
+      </div>
+      <div class="patch-detail" id="detail-${index}-${i}">${p.details}</div>
+    `).join('');
+
+    // body에 직접 붙이기 → 모든 stacking context 밖으로 탈출
+    document.body.appendChild(dropdown);
+
+    // 위치: 버튼 바로 아래, 왼쪽 정렬. 화면 오른쪽 넘치면 오른쪽 정렬
+    const dropW = 260;
+    let left = rect.left + window.scrollX;
+    if (left + dropW > window.innerWidth - 8) {
+      left = rect.right + window.scrollX - dropW;
+    }
+    dropdown.style.top  = `${rect.bottom + window.scrollY + 8}px`;
+    dropdown.style.left = `${left}px`;
+
+    btn.classList.add('active');
+    activePatchIndex = index;
+  }
+
+  function togglePatchDetail(e, cardIdx, detailIdx) {
+    e.stopPropagation();
+    const dateEl   = e.currentTarget;
+    const detailEl = document.getElementById(`detail-${cardIdx}-${detailIdx}`);
+    const isOpen   = detailEl.classList.contains('active');
+
+    // 같은 카드 내 모두 닫기
+    document.querySelectorAll(`[id^="detail-${cardIdx}-"]`).forEach(el => el.classList.remove('active'));
+    document.querySelectorAll(`#pd-${cardIdx} .patch-date-item`).forEach(el => el.classList.remove('active'));
+
+    if (!isOpen) {
+      detailEl.classList.add('active');
+      dateEl.classList.add('active');
+    }
+  }
+
+  function closeAllPatches() {
+    document.querySelectorAll('.patch-dropdown').forEach(el => el.remove());
+    document.querySelectorAll('.btn-patch').forEach(btn => btn.classList.remove('active'));
+    activePatchIndex = null;
+  }
+
+  function parsePatchNotes(text) {
+    const lines = text.split('\n');
+    const patches = [];
+    let cur = null;
+    lines.forEach(line => {
+      line = line.trim();
+      if (line.startsWith('#')) {
+        if (cur) patches.push(cur);
+        cur = { date: line.slice(1).trim(), details: '' };
+      } else if (cur && line) {
+        cur.details += (cur.details ? '<br>' : '') + line;
+      }
+    });
+    if (cur) patches.push(cur);
+    return patches;
+  }
+
+  /* ─── 브레드크럼 ─── */
+  function renderBreadcrumb() {
+    const el = document.getElementById('breadcrumb');
+    el.classList.add('updating');
+    setTimeout(() => {
+      let html = `<div class="breadcrumb-item" onclick="goHome()">📂 HOME</div>`;
+      currentPath.forEach((folder, idx) => {
+        html += `<span class="breadcrumb-sep">›</span>
+                 <div class="breadcrumb-item" onclick="goToPath(${idx})">${folder}</div>`;
+      });
+      el.innerHTML = html;
+      el.classList.remove('updating');
+    }, 120);
+  }
+
+  function goToPath(idx) { currentPath = currentPath.slice(0, idx+1); closeAllPatches(); renderWithTransition(); }
+  function goDown(name)   { currentPath.push(name); closeAllPatches(); renderWithTransition('down'); }
+  function goUp()         { currentPath.pop();       closeAllPatches(); renderWithTransition('up'); }
+  function goHome()       { currentPath = [];        closeAllPatches(); renderWithTransition('up'); }
+
+  /* ─── 전환 래퍼 ─── */
+  function renderWithTransition(dir) {
+    const container = document.getElementById('list-container');
+    // fade out
+    container.classList.add('transitioning');
+    setTimeout(() => {
+      render();
+      container.classList.remove('transitioning');
+      container.classList.add('transitioning-in');
+      setTimeout(() => container.classList.remove('transitioning-in'), 300);
+    }, 180);
+  }
+
+  /* ─── 렌더 ─── */
+  function render() {
+    const container = document.getElementById('list-container');
+    container.innerHTML = '';
+    linkStorage = [];
+    patchStorage = [];
+
+    renderBreadcrumb();
+
+    // 뒤로가기 카드
+    if (currentPath.length > 0) {
+      const back = document.createElement('div');
+      back.className = 'card card-back entering';
+      back.style.setProperty('--i', 0);
+      back.onclick = goUp;
+      back.innerHTML = `<span style="font-size:1.5rem">↩️</span><span>상위 폴더로</span>`;
+      container.appendChild(back);
+    }
+
+    const cpStr = currentPath.join('>');
+    const folders = new Set();
+    const files   = [];
+
+    allData.forEach(row => {
+      const [type, linkUrl, , title, rawPath, patchNotes] = row;
+      const pathParts = (rawPath||'').split('>').map(p=>p.trim()).filter(Boolean);
+      const cleanPath  = pathParts.join('>');
+
+      if (currentPath.length === 0) {
+        if (cleanPath === '') {
+          files.push({ type, title, url: processUrl(type, linkUrl), isDrive: isDriveType(type), isNas: isNasType(type), patchNotes });
+        } else {
+          folders.add(pathParts[0]);
+        }
+      } else {
+        if (cleanPath === cpStr) {
+          files.push({ type, title, url: processUrl(type, linkUrl), isDrive: isDriveType(type), isNas: isNasType(type), patchNotes });
+        } else if (cleanPath.startsWith(cpStr + '>')) {
+          const sub = cleanPath.slice(cpStr.length + 1).split('>')[0];
+          folders.add(sub);
+        }
+      }
+    });
+
+    // 폴더 카드
+    let cardIdx = 0;
+    folders.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'card entering';
+      div.style.setProperty('--i', cardIdx++);
+      div.onclick = () => goDown(name);
+      div.innerHTML = `
+        <div class="card-thumb" style="color:#f59e0b">📁</div>
+        <span class="badge badge-folder">FOLDER</span>
+        <div class="card-body">
+          <div class="card-title">${name}</div>
+          <div class="card-meta">하위 자료 포함</div>
+          <div class="btn-group">
+            <div class="fake-btn btn-down" style="background:var(--surface2);color:var(--text2);">폴더 열기</div>
+          </div>
+        </div>`;
+      container.appendChild(div);
+    });
+
+    // 파일 카드
+    files.forEach(file => {
+      const badgeClass = file.isDrive ? 'badge-drive' : 'badge-nas';
+      const badgeText  = file.isDrive ? 'CLOUD' : 'SERVER';
+      const icon       = file.isDrive ? '☁️' : '💾';
+      const idx = linkStorage.length;
+      linkStorage.push(file.url);
+      patchStorage.push(file.patchNotes);
+      const hasPatch = !!(file.patchNotes && file.patchNotes.trim());
+
+      const div = document.createElement('div');
+      div.className = 'card entering';
+      div.style.setProperty('--i', cardIdx++);
+      div.innerHTML = `
+        <div class="card-thumb">${icon}</div>
+        <span class="badge ${badgeClass}">${badgeText}</span>
+        <div class="card-body">
+          <div class="card-title">${file.title}</div>
+          <div class="card-meta">클릭하여 다운로드</div>
+          <div class="btn-group">
+            <button class="fake-btn btn-down" onclick="openDownload(${idx},event)">다운로드</button>
+            <button class="fake-btn btn-patch"
+                    onclick="togglePatch(${idx},event)"
+                    ${hasPatch?'':'disabled'}>패치내역</button>
+          </div>
+        </div>`;
+      container.appendChild(div);
+    });
+
+    if (!folders.size && !files.length) {
+      const msg = document.createElement('div');
+      msg.className = 'empty-msg';
+      msg.innerHTML = '🚫 이 폴더에는 자료가 없습니다.';
+      container.appendChild(msg);
+    }
+  }
+
+  /* ─── URL 변환 ─── */
+  function isDriveType(t) { return String(t).toLowerCase().includes('drive'); }
+  function isNasType(t)   { return String(t).toLowerCase().includes('nas'); }
+
+  function processUrl(type, url) {
+    if (isDriveType(type)) return convertDriveLink(url);
+    if (isNasType(type))   return convertNasLink(url);
+    return url;
+  }
+
+  function convertDriveLink(url) {
+    try {
+      let id = '';
+      const m1 = url.match(/\/d\/(.+?)\//);
+      if (m1) id = m1[1];
+      else { const m2 = url.match(/id=([^&]+)/); if (m2) id = m2[1]; }
+      if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
+    } catch(e){}
+    return url;
+  }
+
+  function convertNasLink(url) {
+    try {
+      if (url.includes('/d/s/')) return url.replace('/d/s/', '/d/f/');
+      const m = url.match(/\/sharing\/([^\/\?]+)/);
+      if (m) return url.split('/sharing/')[0] + '/d/f/' + m[1];
+    } catch(e){}
+    return url;
+  }
+
+  /* ─── 외부 클릭 시 닫기 ─── */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.card-body')) closeAllPatches();
+    if (!e.target.closest('.layout-dropdown-wrap')) closeLayoutMenu();
+  });
+</script>
+</body>
+</html>
